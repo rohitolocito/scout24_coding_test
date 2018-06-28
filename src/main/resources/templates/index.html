@@ -1,0 +1,28 @@
+<html>
+<body>
+<h1> Welcome to Html Page Analyser </h1>
+<form action="/v1/process" method="post" onSubmit="process()">
+Enter URL:
+  <input type="text" id="url_id" name="url" value=""></input>
+  <br/><br/>
+  <input type="submit" id="submit_id" value="Submit"></input>
+ </form>
+ <script>
+document.getElementById("submit_id").addEventListener("submit", function(event){
+    event.preventDefault()
+});
+function process() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 &amp;&amp; this.status == 200) {
+      console.log("Api completed");
+    }
+  };
+  var url = document.getElementById('url_id').value;
+  xhttp.open("POST", "/v1/process", true);
+  xhttp.setRequestHeader("Content-Type", "application/json");
+  xhttp.send(JSON.stringify({'url' : url}));
+}
+</script>
+</body>
+</html>
