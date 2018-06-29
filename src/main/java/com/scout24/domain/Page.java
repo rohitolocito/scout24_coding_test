@@ -1,7 +1,5 @@
 package com.scout24.domain;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,8 +53,8 @@ public class Page {
 		this.version = version;
 	}
 	
-	public void addHeading(String headingLevel) {
-		headingsCount.put(headingLevel, headingsCount.getOrDefault(headingLevel, 0)+1);
+	public void setHeadingsCount(Map<String, Integer> headingsCount) {
+		this.headingsCount = headingsCount;
 	}
 	
 	public Map<String, Integer> getHeadingsCount() {

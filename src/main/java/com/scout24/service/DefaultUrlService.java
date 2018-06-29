@@ -1,16 +1,12 @@
 package com.scout24.service;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.validator.routines.UrlValidator;
-import org.jsoup.Jsoup;
 import org.springframework.stereotype.Component;
 
 import com.scout24.domain.ResourceLink;
@@ -33,11 +29,14 @@ public class DefaultUrlService implements UrlService {
 	}
 	
 	@Override
-	public boolean isSameDomain(String url1, String url2) {
+	public boolean isSameDomain(String parentUrl, String childUrl) {
 		try {
-			URL urlObject1 = new URL(url1);
-			URL urlObject2 = new URL(url2);
-			return urlObject1.getHost().equals(urlObject2.getHost());
+			URL urlObject = new URL(parentUrl);
+			String host = urlObject.getHost();
+			if (host.startsWith("www.")) {
+				host = host.substring(4);
+			}
+			return childUrl.contains(host);
 		} catch (MalformedURLException e) {
 			return false;
 		}

@@ -2,16 +2,16 @@ package com.scout24.util;
 
 public enum Headings {
 	
-	H1,
-	H2,
-	H3,
-	H4,
-	H5,
-	H6;
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6;
 	
 	public static boolean isHeading(String tag) {
 		for (Headings heading : values()) {
-			if (tag.toUpperCase().equals(heading.name()))
+			if (tag.toLowerCase().equals(heading.name()))
 				return true;
 		}
 		

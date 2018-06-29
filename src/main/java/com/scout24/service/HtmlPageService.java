@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.scout24.domain.Page;
 import com.scout24.domain.ResourceLink;
 import com.scout24.exceptions.HostNotReachableException;
@@ -21,15 +22,12 @@ import com.scout24.util.HtmlPageHelper;
 public class HtmlPageService implements PageService {
 	
 	@Autowired
-	private UrlService urlValidationService;
-	
-	@Autowired
 	private UrlService urlService;
 
 	@Override
 	public Page analyze(Page page) throws Exception {
 
-		if (!urlValidationService.isValid(page.getUrl())) {
+		if (!urlService.isValid(page.getUrl())) {
 			throw new MalformedUrlException("failed to validate page");
 		}
 		
@@ -42,12 +40,14 @@ public class HtmlPageService implements PageService {
 		}
 	}
 	
-	private void processDocument(Document document, Page page) {
-		
+	@VisibleForTesting
+	public void processDocument(Document document, Page page) {
+
+		page.addAllLinks(processLinkElements(HtmlPageHelper.getAllLinks(document), page));
 		page.setTitle(document.title());
 		page.setVersion(HtmlPageHelper.getVersion(document));
 		page.setHasLoginForm(HtmlPageHelper.hasLoginForm(document));
-		page.addAllLinks(processLinkElements(HtmlPageHelper.getAllLinks(document), page));
+		page.setHeadingsCount(HtmlPageHelper.getHeadingsCount(document));
 		
 	}
 	
@@ -59,7 +59,7 @@ public class HtmlPageService implements PageService {
 						ResourceLink resourceLink = new ResourceLink();
 						resourceLink.setUrl(HtmlPageHelper.getLinkRef(element));
 						urlService.updateReachability(resourceLink);
-						if (urlService.isSameDomain(resourceLink.getUrl(), page.getUrl())) {
+						if (urlService.isSameDomain(page.getUrl(), resourceLink.getUrl())) {
 							page.incrementInternalLinks();
 						} else {
 							page.incrementExternalLinks();
